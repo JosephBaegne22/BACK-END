@@ -1,0 +1,28 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "description": "Projet file rouge - back-end",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node src/server.js",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GRP09-PRODUCTION/BACK-END.git"
+  },
+  "author": "GRP09",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GRP09-PRODUCTION/BACK-END/issues"
+  },
+  "homepage": "https://github.com/GRP09-PRODUCTION/BACK-END#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
