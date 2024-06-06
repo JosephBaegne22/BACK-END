@@ -1,20 +1,36 @@
-// Import the 'express' module along with 'Request' and 'Response' types from express
-import express, { Request, Response } from 'express';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+import http, { createServer } from 'http';
+export const BASE_PATH: string = __dirname;
+config({ path: resolve(`${BASE_PATH}/../.env`) });
 
-// Create an Express application
-const app = express();
+import app from './app';
+import { connection } from './utils/dbConnection';
+import { logger } from './utils/logger';
+import mongoose from 'mongoose';
 
-// Specify the port number for the server
-const port: number = 3000;
+const port = process.env.PORT || 3000;
 
-// Define a route for the root path ('/')
-app.get('/', (req: Request, res: Response) => {
-  // Send a response to the client
-  res.send('Hello, TypeScript + Node.js + Express!');
+const server = createServer(app);
+
+connection.then(() => {
+   logger.info('DB connected successfully');
+   server.listen(port, () => {
+      logger.info(`Server is running on ${port} with process id ${process.pid}`);
+   });
 });
 
-// Start the server and listen on the specified port
-app.listen(port, () => {
-  // Log a message when the server is successfully running
-  console.log(`Server is running on http://localhost:${port}`);
+// Exit handler for server
+function exitHandler() {
+   server.close(() => {
+      logger.info(`Http server closed.`);
+      mongoose.connection.close(() => {
+         logger.info(`Mongoose connection disconnected`);
+         process.exit(0);
+      });
+   });
+}
+
+[`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`, `EADDRINUSE`].forEach((eventType) => {
+   (process as NodeJS.EventEmitter).on(eventType, exitHandler.bind(eventType));
 });
