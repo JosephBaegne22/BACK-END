@@ -1,24 +1,24 @@
 import mongoose, { Schema } from "mongoose";
 
-const racesSchema = new mongoose.Schema(
+const usersSchema = new mongoose.Schema(
   {
     _id: {
       type: Schema.Types.ObjectId,
       required: true,
     },
-    start_at: {
-      type: Date,
+    email: {
+      type: String,
       required: true,
     },
-    end_at: {
-      type: Date,
+    username: {
+      type: String,
       required: true,
     },
-    circuit_id: {
-      type: Schema.Types.ObjectId,
+    password: {
+      type: String,
       required: true,
     },
-    nb_drivers: {
+    age: {
       type: Number,
       required: true,
     },
@@ -26,4 +26,4 @@ const racesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Races", racesSchema);
+module.exports = mongoose.model("Users", usersSchema);
