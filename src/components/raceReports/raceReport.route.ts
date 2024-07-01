@@ -1,4 +1,4 @@
-import { racesReportsController } from "./raceReports.controller";
+import { racesReportsController } from "./raceReport.controller";
 
 export default (app: any) => {
     app.get(

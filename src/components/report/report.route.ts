@@ -1,4 +1,4 @@
-import { reportsController } from "./reports.controller";
+import { reportsController } from "./report.controller";
 
 export default (app: any) => {
     app.get(

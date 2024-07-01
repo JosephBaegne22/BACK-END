@@ -1,4 +1,4 @@
-import { circuitsController } from "./circuits.controller";
+import { circuitsController } from "./circuit.controller";
 
 export default (app: any) => {
     app.get(

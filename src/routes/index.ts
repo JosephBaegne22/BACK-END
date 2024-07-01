@@ -1,8 +1,8 @@
-import carsRoute from "../components/cars/cars.route";
-import race_reportsRoute from "../components/raceReports/raceReports.route";
-import racesRoute from "../components/races/races.route";
-import reportsRoute from "../components/reports/reports.route";
-import usersRoute from "../components/users/users.route";
+import carsRoute from "../components/car/car.route";
+import race_reportsRoute from "../components/raceReports/raceReport.route";
+import racesRoute from "../components/race/race.route";
+import reportsRoute from "../components/report/report.route";
+import usersRoute from "../components/user/user.route";
 
 class Routes {
     public init(app : any) {

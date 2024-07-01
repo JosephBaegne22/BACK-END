@@ -1,12 +1,13 @@
-import { racesController } from "./races.controller";
+import { carsController } from "./car.controller";
 
 export default (app: any) => {
+
     app.get(
-        '/api/races/list',
+        '/api/cars/list',
         // [
         //    Common.authenticateToken,
         //    Common.authenticateAccount,
         // ],
-        (req: Request, res: Response) => racesController.getRacesList(req, res)
+        (req: Request, res: Response) => carsController.getCarsList(req, res)
      );
 };
