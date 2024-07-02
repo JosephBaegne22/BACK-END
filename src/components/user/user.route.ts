@@ -13,7 +13,7 @@ export default (app) => {
    );
 
    app.post(
-      '/api/signin',
+      '/api/signIn',
       [
          validator.signIn
       ],
@@ -21,7 +21,7 @@ export default (app) => {
    );
 
    app.post(
-      '/api/signout',
+      '/api/signOut',
       [
          common.authenticateToken,
       ],
@@ -29,7 +29,7 @@ export default (app) => {
    );
 
    app.post(
-      '/api/signup',
+      '/api/signUp',
       [
          validator.signUp
       ],
