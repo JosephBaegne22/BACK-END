@@ -20,7 +20,7 @@ class UserValidator {
 
     public async signUp(req: Request, res: Response, next: NextFunction) {
         const errors = {};
-        const { password, username = '' } = req.body;
+        const { password, username = '' } = req.body;        
 
         if (!password) {
             errors['password'] = 'PASSWORD_REQUIRED';

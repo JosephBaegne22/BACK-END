@@ -1,7 +1,8 @@
-import e, { NextFunction, Response } from "express";
+import { NextFunction, Response } from "express";
 import mongoose from "mongoose";
 import { readFileSync } from "fs";
 import HttpStatus from "http-status-codes";
+
 
 const { ObjectId } = mongoose.Types;
 
@@ -75,9 +76,9 @@ export class Helper {
     return Helper.createResponse(
       res,
       HttpStatus.UNPROCESSABLE_ENTITY,
-      res["__"](errors[Object.keys(errors)[0]]),
+      (errors[Object.keys(errors)[0]]),
       {
-        error: res["__"](errors[Object.keys(errors)[0]]),
+        error: (errors[Object.keys(errors)[0]]),
       }
     );
   }

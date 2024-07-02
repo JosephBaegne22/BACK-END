@@ -2,6 +2,7 @@ import common from "../../utils/common/common";
 import { usersController } from "./user.controller";
 import validator from './user.validator';
 
+
 export default (app: any) => {
    app.get(
       '/api/user',
