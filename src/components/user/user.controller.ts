@@ -52,18 +52,21 @@ class UsersController {
    public async signIn(req: Request, res: Response) {
       const { username, password } = req.body;
       try {
-         let user: any = await UserRecord.findOne({ username, isDeleted: false }).lean();
-         if (user) {
-           
-            const isPwdMatching = await bcrypt.compare(password, user.password);
+         const _user = await UserRecord.findOne({username}).lean();         
+
+         if (_user) {
+
+            const isPwdMatching = await bcrypt.compare(password, _user.password);
+
             if (isPwdMatching) {
 
-               /** sign in user */
-               let { user: userDetail, tokenData } = await userHelper.userSignIn(user);
+               let { user: userDetail, tokenData } = await userHelper.userSignIn(_user);
+
                userDetail = _.omit(userDetail, ['password']);
+               
                res.setHeader('Set-Cookie', [Helper.createCookie(tokenData)]);
 
-               return Helper.createResponse(res, HttpStatus.OK, res['__']('SIGNIN_SUCCESS'), {
+               return Helper.createResponse(res, HttpStatus.OK, 'SIGNIN_SUCCESS', {
                   user: userDetail,
                   token: tokenData?.token,
                });
@@ -74,7 +77,7 @@ class UsersController {
                   custom_message: 'Invalid credentials passed',
                   username
                });
-               Helper.createResponse(res, HttpStatus.UNAUTHORIZED, res['__']('INVALID_CREDENTIALS'), {});
+               Helper.createResponse(res, HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS', {});
                return;
             }
          } else {
@@ -84,13 +87,13 @@ class UsersController {
                custom_message: 'User does not exist in system',
                username
             });
-            Helper.createResponse(res, HttpStatus.NOT_FOUND, res['__']('USER_NOT_FOUND'), {});
+            Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});
             return;
          }
       } catch (error) {
          logger.error(__filename, {
             method: 'signIn',
-            //requestId: req['uuid'],
+            requestId: req['uuid'],
             custom_message: 'Error while signin',
             error
          });
