@@ -5,7 +5,7 @@ import reportsRoute from "../components/report/report.route";
 import usersRoute from "../components/user/user.route";
 
 class Routes {
-    public init(app : any) {
+    public init(app) {
         carsRoute(app);
         race_reportsRoute(app);
         racesRoute(app);

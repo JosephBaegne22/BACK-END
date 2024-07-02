@@ -33,8 +33,6 @@ class UserValidator {
                 errors['password'] = 'CAPITAL_LETTER_MISSING';
             }else if(password.toUpperCase() === password){
                 errors['password'] = 'SMALL_LETTER_MISSING';
-            }else if(!password.includes(Number)){
-                errors['password'] = 'NUMBER_MISSING';
             }
         }
 

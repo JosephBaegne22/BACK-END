@@ -3,7 +3,7 @@ import { usersController } from "./user.controller";
 import validator from './user.validator';
 
 
-export default (app: any) => {
+export default (app) => {
    app.get(
       '/api/user',
         [

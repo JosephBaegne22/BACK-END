@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import { corsObj } from './cors';
+import cookieParser from 'cookie-parser';
 
 class Middlewares {
    public init(app: express.Application) {
@@ -10,11 +11,13 @@ class Middlewares {
 
       // Enable request body parsing
       app.use(
-         bodyParser.urlencoded({
-            extended: true,
+         bodyParser.json({
             limit: '20mb'
          })
       );
+
+      app.use(cookieParser());
+
    }
 }
 
