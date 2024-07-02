@@ -35,4 +35,12 @@ export default (app) => {
       ],
       (req, res) => usersController.signUp(req, res)
    );
+
+   app.post(
+      '/api/resetPwd',
+      [
+         validator.signUp
+      ],
+      (req, res) => usersController.signUp(req, res)
+   );
 };

@@ -27,13 +27,14 @@ class UsersController {
    }
 
    public async signUp(req: Request, res: Response) {
-      const { username, password } = req.body;
+      const { username, password, secret_answer } = req.body;
 
       try {
          const encryptedPassword = await bcrypt.hash(password, Constants.SALT_VALUE);
          const user = new UserRecord({
             username,
-            password: encryptedPassword
+            password: encryptedPassword,
+            secret_answer
          });
          await user.save();
 
@@ -117,6 +118,31 @@ class UsersController {
             error
          });
          return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'USER_SIGNOUT_ERROR', {});
+      }
+   }
+
+   public async resetPwd(req: Request, res: Response) {
+      const { username, secret_answer, password } = req.body
+      try {
+
+         const _user = await UserRecord.findOne({ username, secret_answer }).lean();
+         
+         if (_user) {
+            await UserRecord.updateOne({ _id: _user._id }, {
+               password: await bcrypt.hash(password, Constants.SALT_VALUE)
+            })
+            return Helper.createResponse(res, HttpStatus.OK, 'USER_RESET_SUCCESS', {});
+         }
+
+         return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});
+      } catch (error) {
+         logger.error(__filename, {
+            method: 'resetPwd',
+            requestId: req['uuid'],
+            custom_message: 'Error while reset password',
+            error
+         });
+         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'PWD_RESET_ERROR', {});
       }
    }
 }

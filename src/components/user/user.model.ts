@@ -4,6 +4,7 @@ export interface User extends mongoose.Document {
   _id: mongoose.Schema.Types.ObjectId;
   username: string;
   password: string;
+  secret_answer: string;
 }
 
 const userSchema = new mongoose.Schema(
@@ -13,7 +14,12 @@ const userSchema = new mongoose.Schema(
       required: false
     },
     password: {
-      type: String
+      type: String,
+      required: true
+    },
+    secret_answer: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }
