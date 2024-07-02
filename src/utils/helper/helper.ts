@@ -6,6 +6,11 @@ import HttpStatus from "http-status-codes";
 const { ObjectId } = mongoose.Types;
 
 export class Helper {
+
+  static createCookie(tokenData) {
+    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+  }
+  
   static createResponse(res, status, message, payload): any {
     return res.status(status).json({
       status: status,
