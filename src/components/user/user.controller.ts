@@ -137,9 +137,10 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
-         const _user = await UserRecord.findOne({ username, secret_answer }).lean();
+         const _user = await UserRecord.findOne({ username }).lean();
 
-         if (_user) {
+
+         if (_user ) {
 
             const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
 
@@ -175,46 +176,49 @@ class UsersController {
    }
 
    public async updateUser(req: Request, res: Response) {
-      const { username, secret_answer, newSecret_answer, password, newPassword } = req.body
+      const { user, username, secret_answer, newSecret_answer, password, newPassword } = req.body
       try {
 
-         const _user = await UserRecord.findOne({ username }).lean();
-
-         if (_user) {
+         if (user) {
             if (username) {
 
                const usernameCheck = await UserRecord.find({ username }).lean();
                
-               if (username !== _user.username && usernameCheck.length > 0) {
-                  await UserRecord.updateOne({ _id: _user._id }, {
+               if (username === user.username || usernameCheck.length === 0) {
+                  await UserRecord.updateOne({ _id: user._id }, {
                      username: username,
                   })
+                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
                }
                return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'USERNAME_EXIST', {});
 
             } else if (secret_answer) {
 
-               const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
+               const isAnswerMatching = await bcrypt.compare(secret_answer, user.secret_answer);
                if (!isAnswerMatching) {
 
                   const encryptedSecret_answer = await bcrypt.hash(newSecret_answer, Constants.SALT_VALUE);
 
-                  await UserRecord.updateOne({ _id: _user._id }, {
+                  await UserRecord.updateOne({ _id: user._id }, {
                      secret_answer: encryptedSecret_answer
                   })
+
+                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
                }
                return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'SECRET_ANSWER_WRONG', {});
 
 
             } else if (password) {
 
-               const isPwdMatching = await bcrypt.compare(password, _user.password);
+               const isPwdMatching = await bcrypt.compare(password, user.password);
 
                if (isPwdMatching) {
                   const encryptedNewPassword = await bcrypt.hash(newPassword, Constants.SALT_VALUE);
-                  await UserRecord.updateOne({ _id: _user._id }, {
+                  await UserRecord.updateOne({ _id: user._id }, {
                      password: encryptedNewPassword
                   })
+
+                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
                }
                return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'PASSWORD_WRONG', {});
 
