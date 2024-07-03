@@ -28,7 +28,7 @@ class UserValidator {
         } else {
             if (password.length < 8) {
                 errors['password'] = 'PASSWORD_MIN_LENGTH';
-            } else if (password.toLowerCase().includes(username.toLowerCase())) {
+            } else if (password.includes(username)) {
                 errors['password'] = 'PASSWORD_CONTAIN_USERNAME';
             } else if (password.toLowerCase() === password) {
                 errors['password'] = 'CAPITAL_LETTER_MISSING';
@@ -50,7 +50,6 @@ class UserValidator {
             errors['secret_answer'] = 'SECRET_ANSWER_REQUIRED';
         }
 
-        req.body.username = username.toLowerCase();
         req.body.secret_answer = secret_answer.toLowerCase();
         Helper.returnErrorOrPassToNext(res, next, errors);
     }
