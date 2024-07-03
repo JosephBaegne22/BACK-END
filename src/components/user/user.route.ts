@@ -12,6 +12,14 @@ export default (app) => {
       (req, res) => usersController.getUser(req, res)
    );
 
+   app.put(
+      '/api/user',
+        [
+           common.authenticateToken,
+        ],
+      (req, res) => usersController.updateUser(req, res)
+   );
+
    app.post(
       '/api/signIn',
       [

@@ -14,7 +14,7 @@ class UsersController {
       const { user } = req.body;
       try {
          const _user = await UserRecord.findOne({ username: user.username }).lean();
-         return Helper.createResponse(res, HttpStatus.OK, 'USER_FETCHED', {_user});
+         return Helper.createResponse(res, HttpStatus.OK, 'USER_FETCHED', { _user });
       } catch (error) {
          logger.error(__filename, {
             method: 'getUser',
@@ -55,7 +55,7 @@ class UsersController {
    public async signIn(req: Request, res: Response) {
       const { username, password } = req.body;
       try {
-         const _user = await UserRecord.findOne({username, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT }}).lean();         
+         const _user = await UserRecord.findOne({ username, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT } }).lean();
 
          if (_user) {
 
@@ -66,7 +66,7 @@ class UsersController {
                let { user: userDetail, tokenData } = await userHelper.userSignIn(_user);
 
                userDetail = _.omit(userDetail, ['password']);
-               
+
                res.setHeader('Set-Cookie', [Helper.createCookie(tokenData)]);
 
                await UserRecord.updateOne({ _id: _user._id }, {
@@ -137,7 +137,7 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
-         const _user = await UserRecord.findOne({ username, secret_answer, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT }  }).lean();
+         const _user = await UserRecord.findOne({ username, secret_answer, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT } }).lean();
 
          if (_user) {
 
@@ -175,16 +175,50 @@ class UsersController {
    }
 
    public async updateUser(req: Request, res: Response) {
-      const { username, secret_answer, password, newPassword } = req.body
+      const { username, secret_answer, secret_answerNew, password, newPassword } = req.body
       try {
 
-         const _user = await UserRecord.findOne({ username, secret_answer }).lean();
-         
+         const _user = await UserRecord.findOne({ username }).lean();
+
          if (_user) {
-            await UserRecord.updateOne({ _id: _user._id }, {
-               password: await bcrypt.hash(password, Constants.SALT_VALUE)
-            })
-            return Helper.createResponse(res, HttpStatus.OK, 'USER_RESET_SUCCESS', {});
+            if (username) {
+
+               const usernameCheck = await UserRecord.find({ username }).lean();
+               
+               if (username !== _user.username && usernameCheck.length > 0) {
+                  await UserRecord.updateOne({ _id: _user._id }, {
+                     username: username,
+                  })
+               }
+               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'USERNAME_EXIST', {});
+
+            } else if (secret_answer) {
+
+               const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
+               if (!isAnswerMatching) {
+
+                  const encryptedSecret_answer = await bcrypt.hash(secret_answer, Constants.SALT_VALUE);
+
+                  await UserRecord.updateOne({ _id: _user._id }, {
+                     secret_answer: encryptedSecret_answer
+                  })
+               }
+               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'SECRET_ANSWER_WRONG', {});
+
+
+            } else if (password) {
+
+               const isPwdMatching = await bcrypt.compare(password, _user.password);
+
+               if (isPwdMatching) {
+                  const encryptedNewPassword = await bcrypt.hash(newPassword, Constants.SALT_VALUE);
+                  await UserRecord.updateOne({ _id: _user._id }, {
+                     password: encryptedNewPassword
+                  })
+               }
+               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'PASSWORD_WRONG', {});
+
+            }
          }
 
          return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});
@@ -192,10 +226,10 @@ class UsersController {
          logger.error(__filename, {
             method: 'updateUser',
             requestId: req['uuid'],
-            custom_message: 'Error while reset password',
+            custom_message: 'Error while update user',
             error
          });
-         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'PWD_RESET_ERROR', {});
+         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'USER_UPDATE_ERROR', {});
       }
    }
 }
