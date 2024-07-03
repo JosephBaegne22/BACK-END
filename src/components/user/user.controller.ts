@@ -30,6 +30,13 @@ class UsersController {
       const { username, password, secret_answer } = req.body;
 
       try {
+
+         const usernameCheck = await UserRecord.find({ username }).lean();
+
+         if (usernameCheck.length !== 0) {
+            return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'USERNAME_EXIST', {});
+
+         }
          const encryptedPassword = await bcrypt.hash(password, Constants.SALT_VALUE);
          const encryptedSecret_answer = await bcrypt.hash(secret_answer, Constants.SALT_VALUE);
 
@@ -55,7 +62,7 @@ class UsersController {
    public async signIn(req: Request, res: Response) {
       const { username, password } = req.body;
       try {
-         const _user = await UserRecord.findOne({ username}).lean();
+         const _user = await UserRecord.findOne({ username }).lean();
          console.log(username);
 
          if (_user) {
@@ -138,10 +145,10 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
-         
-         const _user = await UserRecord.findOne({ username }).lean();         
 
-         if (_user ) {
+         const _user = await UserRecord.findOne({ username }).lean();
+
+         if (_user) {
 
             const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
 
@@ -184,7 +191,7 @@ class UsersController {
             if (username) {
 
                const usernameCheck = await UserRecord.find({ username }).lean();
-               
+
                if (username === user.username || usernameCheck.length === 0) {
                   await UserRecord.updateOne({ _id: user._id }, {
                      username: username,

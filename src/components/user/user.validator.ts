@@ -39,11 +39,6 @@ class UserValidator {
 
         if (!username) {
             errors['username'] = 'USERNAME_REQUIRED';
-        } else {
-            const checkUser = await UserRecord.findOne({ username, isDeleted: false }).lean();
-            if (checkUser) {
-                errors['username'] = 'USERNAME_EXIST';
-            }
         }
 
         if (!secret_answer) {
@@ -89,11 +84,11 @@ class UserValidator {
         const { username = '' } = req.body;
         const _user = await UserRecord.findOne({ username }).lean();
         const todayDate = new Date();
-        
+
         if (_user) {
             let { count_error_access, blocked, blocked_date } = _user;
             blocked_date = new Date(blocked_date);
-            const _blocked_date = new Date(blocked_date.getTime() + 5*60000)
+            const _blocked_date = new Date(blocked_date.getTime() + 5 * 60000)
 
             if (blocked) {
                 if (_blocked_date >= todayDate) {
@@ -101,7 +96,7 @@ class UserValidator {
                 } else {
                     await UserRecord.updateOne({ _id: _user._id }, { count_error_access: 0, blocked: false, blocked_date: null });
                 }
-            }else{
+            } else {
                 if (count_error_access === Constants.MAX_LOGIN_ATTEMPT) {
                     await UserRecord.updateOne({ _id: _user._id }, { blocked: true, blocked_date: todayDate });
                 }
