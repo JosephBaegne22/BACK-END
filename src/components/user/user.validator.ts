@@ -93,11 +93,12 @@ class UserValidator {
         const todayDate = new Date();
         
         if (_user) {
-            const { count_error_access, blocked, blocked_date } = _user;
-            blocked_date.setMinutes(blocked_date.getMinutes() + 5);
+            let { count_error_access, blocked, blocked_date } = _user;
+            blocked_date = new Date(blocked_date);
+            const _blocked_date = new Date(blocked_date.getTime() + 5*60000)
 
             if (blocked) {
-                if (blocked_date >= todayDate) {
+                if (_blocked_date >= todayDate) {
                     errors['user'] = 'USER_BLOCKED';
                 } else {
                     await UserRecord.updateOne({ _id: _user._id }, { count_error_access: 0, blocked: false, blocked_date: null });
