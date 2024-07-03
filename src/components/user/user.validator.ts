@@ -95,7 +95,9 @@ class UserValidator {
         
         if (_user) {
             const { count_error_access, blocked, blocked_date } = _user;
-            const blocked_min = blocked_date ? blocked_date.getMinutes() + 5: 0;
+            const blocked_min = blocked_date.setMinutes(blocked_date.getMinutes() + 5);
+            console.log('blocked_min', blocked_min);
+            console.log('nowMin', deblockMin);
 
             if (blocked) {
                 if (blocked_min >= deblockMin) {
