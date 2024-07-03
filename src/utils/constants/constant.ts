@@ -7,4 +7,5 @@ export class Constants {
      };
      public static SALT_VALUE = 10;
      public static JWT_TOKEN_EXPIRE_IN = 7 * 24 * 60 * 60; // 7 days
+     public static MAX_LOGIN_ATTEMPT = 5;
 }

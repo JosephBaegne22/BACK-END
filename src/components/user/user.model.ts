@@ -5,6 +5,9 @@ export interface User extends mongoose.Document {
   username: string;
   password: string;
   secret_answer: string;
+  count_error_access: number;
+  blocked_date: Date;
+  blocked: boolean;
 }
 
 const userSchema = new mongoose.Schema(
@@ -20,6 +23,17 @@ const userSchema = new mongoose.Schema(
     secret_answer: {
       type: String,
       required: true
+    },
+    count_error_access: {
+      type: Number,
+      default: 0
+    },
+    blocked_date: {
+      type: Date
+    },
+    blocked: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

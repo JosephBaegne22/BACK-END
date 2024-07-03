@@ -31,10 +31,12 @@ class UsersController {
 
       try {
          const encryptedPassword = await bcrypt.hash(password, Constants.SALT_VALUE);
+         const encryptedSecret_answer = await bcrypt.hash(secret_answer, Constants.SALT_VALUE);
+
          const user = new UserRecord({
             username,
             password: encryptedPassword,
-            secret_answer
+            secret_answer: encryptedSecret_answer
          });
          await user.save();
 
@@ -53,7 +55,7 @@ class UsersController {
    public async signIn(req: Request, res: Response) {
       const { username, password } = req.body;
       try {
-         const _user = await UserRecord.findOne({username}).lean();         
+         const _user = await UserRecord.findOne({username, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT }}).lean();         
 
          if (_user) {
 
@@ -67,11 +69,18 @@ class UsersController {
                
                res.setHeader('Set-Cookie', [Helper.createCookie(tokenData)]);
 
+               await UserRecord.updateOne({ _id: _user._id }, {
+                  count_error_access: 0
+               })
+
                return Helper.createResponse(res, HttpStatus.OK, 'SIGNIN_SUCCESS', {
                   user: userDetail,
                   token: tokenData?.token,
                });
             } else {
+               await UserRecord.updateOne({ _id: _user._id }, {
+                  count_error_access: _user.count_error_access + 1
+               })
                logger.error(__filename, {
                   method: 'signIn',
                   requestId: req['uuid'],
@@ -105,11 +114,14 @@ class UsersController {
    public async signOut(req: Request, res: Response) {
       const { user } = req.body
       try {
+
          await userHelper.removeUserSession({
             userId: user?._id,
             sessionId: req['session']?._id
          });
+
          return Helper.createResponse(res, HttpStatus.OK, 'USER_OUT', {});
+
       } catch (error) {
          logger.error(__filename, {
             method: 'signOut',
@@ -125,6 +137,47 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
+         const _user = await UserRecord.findOne({ username, secret_answer, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT }  }).lean();
+
+         if (_user) {
+
+            const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
+
+            if (isAnswerMatching) {
+
+               await UserRecord.updateOne({ _id: _user._id }, {
+                  password: await bcrypt.hash(password, Constants.SALT_VALUE)
+               })
+
+               return Helper.createResponse(res, HttpStatus.OK, 'USER_RESET_SUCCESS', {});
+
+            }
+
+            await UserRecord.updateOne({ _id: _user._id }, {
+               count_error_access: _user.count_error_access + 1
+            })
+
+            return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'WRONG_ANSWER', {});
+
+         }
+
+         return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});
+
+      } catch (error) {
+         logger.error(__filename, {
+            method: 'resetPwd',
+            requestId: req['uuid'],
+            custom_message: 'Error while reset password',
+            error
+         });
+         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'PWD_RESET_ERROR', {});
+      }
+   }
+
+   public async updateUser(req: Request, res: Response) {
+      const { username, secret_answer, password, newPassword } = req.body
+      try {
+
          const _user = await UserRecord.findOne({ username, secret_answer }).lean();
          
          if (_user) {
@@ -137,7 +190,7 @@ class UsersController {
          return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});
       } catch (error) {
          logger.error(__filename, {
-            method: 'resetPwd',
+            method: 'updateUser',
             requestId: req['uuid'],
             custom_message: 'Error while reset password',
             error

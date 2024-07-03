@@ -15,7 +15,8 @@ export default (app) => {
    app.post(
       '/api/signIn',
       [
-         validator.signIn
+         validator.signIn,
+         validator.countLoginAttempt
       ],
       (req, res) => usersController.signIn(req, res)
    );
@@ -39,7 +40,8 @@ export default (app) => {
    app.post(
       '/api/resetPwd',
       [
-         validator.signUp
+         validator.signUp,
+         validator.countLoginAttempt
       ],
       (req, res) => usersController.signUp(req, res)
    );
