@@ -51,6 +51,6 @@ export default (app) => {
          validator.signUp,
          validator.countLoginAttempt
       ],
-      (req, res) => usersController.signUp(req, res)
+      (req, res) => usersController.resetPwd(req, res)
    );
 };

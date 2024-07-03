@@ -91,15 +91,14 @@ class UserValidator {
         const { username = '' } = req.body;
         const _user = await UserRecord.findOne({ username }).lean();
         const todayDate = new Date();
-        const nowHour = todayDate.getHours();
-        console.log('nowHour', nowHour);
+        const deblockMin = todayDate.getMinutes();
         
         if (_user) {
             const { count_error_access, blocked, blocked_date } = _user;
-            const blocked_hour = blocked_date ? blocked_date.getHours() : 0;
+            const blocked_min = blocked_date ? blocked_date.getMinutes() + 5: 0;
 
             if (blocked) {
-                if (blocked_hour < (nowHour + 1)) {
+                if (blocked_min >= deblockMin) {
                     errors['user'] = 'USER_BLOCKED';
                 } else {
                     await UserRecord.updateOne({ _id: _user._id }, { count_error_access: 0, blocked: false, blocked_date: null });

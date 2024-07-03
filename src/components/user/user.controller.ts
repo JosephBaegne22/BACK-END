@@ -55,7 +55,7 @@ class UsersController {
    public async signIn(req: Request, res: Response) {
       const { username, password } = req.body;
       try {
-         const _user = await UserRecord.findOne({ username, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT } }).lean();
+         const _user = await UserRecord.findOne({ username}).lean();
 
          if (_user) {
 
@@ -137,7 +137,7 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
-         const _user = await UserRecord.findOne({ username, secret_answer, count_error_access: { $lt: Constants.MAX_LOGIN_ATTEMPT } }).lean();
+         const _user = await UserRecord.findOne({ username, secret_answer }).lean();
 
          if (_user) {
 
