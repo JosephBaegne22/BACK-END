@@ -175,7 +175,7 @@ class UsersController {
    }
 
    public async updateUser(req: Request, res: Response) {
-      const { username, secret_answer, secret_answerNew, password, newPassword } = req.body
+      const { username, secret_answer, newSecret_answer, password, newPassword } = req.body
       try {
 
          const _user = await UserRecord.findOne({ username }).lean();
@@ -197,7 +197,7 @@ class UsersController {
                const isAnswerMatching = await bcrypt.compare(secret_answer, _user.secret_answer);
                if (!isAnswerMatching) {
 
-                  const encryptedSecret_answer = await bcrypt.hash(secret_answer, Constants.SALT_VALUE);
+                  const encryptedSecret_answer = await bcrypt.hash(newSecret_answer, Constants.SALT_VALUE);
 
                   await UserRecord.updateOne({ _id: _user._id }, {
                      secret_answer: encryptedSecret_answer
