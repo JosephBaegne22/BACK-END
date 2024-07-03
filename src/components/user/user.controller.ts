@@ -137,8 +137,12 @@ class UsersController {
       const { username, secret_answer, password } = req.body
       try {
 
+         console.log(username);
+         
          const _user = await UserRecord.findOne({ username }).lean();
 
+         console.log(_user);
+         
 
          if (_user ) {
 

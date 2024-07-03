@@ -8,14 +8,14 @@ class UserValidator {
         const errors = {};
         const { password, username = '' } = req.body;
 
-        if (!password) {
-            errors['password'] = 'PASSWORD_REQUIRED';
-        }
+
+        // if (!password) {
+        //     errors['password'] = 'PASSWORD_REQUIRED';
+        // }
 
         if (!username) {
             errors['username'] = 'USERNAME_REQUIRED';
         }
-        req.body.username = username.toLowerCase();
         Helper.returnErrorOrPassToNext(res, next, errors);
     }
 
@@ -81,7 +81,6 @@ class UserValidator {
             errors['secret_answer'] = 'SECRET_ANSWER_REQUIRED';
         }
 
-        req.body.username = username.toLowerCase();
         req.body.secret_answer = secret_answer.toLowerCase();
         Helper.returnErrorOrPassToNext(res, next, errors);
     }
@@ -110,7 +109,6 @@ class UserValidator {
             }
         }
 
-        req.body.username = username.toLowerCase();
         Helper.returnErrorOrPassToNext(res, next, errors);
     }
 
