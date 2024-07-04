@@ -9,9 +9,9 @@ class UserValidator {
         const { password, username = '' } = req.body;
 
 
-        // if (!password) {
-        //     errors['password'] = 'PASSWORD_REQUIRED';
-        // }
+        if (!password) {
+            errors['password'] = 'PASSWORD_REQUIRED';
+        }
 
         if (!username) {
             errors['username'] = 'USERNAME_REQUIRED';

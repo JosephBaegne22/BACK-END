@@ -2,7 +2,7 @@ import HttpStatus from 'http-status-codes';
 import { Helper } from '../../utils/helper';
 import { logger } from '../../utils/logger';
 
-class ReportsController {
+class ReportController {
     public async getReportsList(req: Request, res: Response) {
         try {
            
@@ -18,4 +18,4 @@ class ReportsController {
         }
      }
 }
-export const reportsController = new ReportsController();
+export const reportController = new ReportController();

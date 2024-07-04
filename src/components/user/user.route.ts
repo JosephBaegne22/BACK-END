@@ -1,5 +1,5 @@
 import common from "../../utils/common/common";
-import { usersController } from "./user.controller";
+import { userController } from "./user.controller";
 import validator from './user.validator';
 
 
@@ -9,7 +9,7 @@ export default (app) => {
         [
            common.authenticateToken,
         ],
-      (req, res) => usersController.getUser(req, res)
+      (req, res) => userController.getUser(req, res)
    );
 
    app.put(
@@ -17,7 +17,7 @@ export default (app) => {
         [
            common.authenticateToken,
         ],
-      (req, res) => usersController.updateUser(req, res)
+      (req, res) => userController.updateUser(req, res)
    );
 
    app.post(
@@ -26,7 +26,7 @@ export default (app) => {
          validator.signIn,
          validator.countLoginAttempt
       ],
-      (req, res) => usersController.signIn(req, res)
+      (req, res) => userController.signIn(req, res)
    );
 
    app.post(
@@ -34,7 +34,7 @@ export default (app) => {
       [
          common.authenticateToken,
       ],
-      (req, res) => usersController.signOut(req, res)
+      (req, res) => userController.signOut(req, res)
    );
 
    app.post(
@@ -42,7 +42,7 @@ export default (app) => {
       [
          validator.signUp
       ],
-      (req, res) => usersController.signUp(req, res)
+      (req, res) => userController.signUp(req, res)
    );
 
    app.post(
@@ -51,6 +51,6 @@ export default (app) => {
          validator.signUp,
          validator.countLoginAttempt
       ],
-      (req, res) => usersController.resetPwd(req, res)
+      (req, res) => userController.resetPwd(req, res)
    );
 };

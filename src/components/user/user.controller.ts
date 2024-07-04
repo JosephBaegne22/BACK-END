@@ -9,7 +9,7 @@ import { Request, Response } from 'express';
 import { Constants } from '../../utils/constants/constant';
 
 
-class UsersController {
+class UserController {
    public async getUser(req: Request, res: Response) {
       const { user } = req.body;
       try {
@@ -245,4 +245,4 @@ class UsersController {
       }
    }
 }
-export const usersController = new UsersController();
+export const userController = new UserController();

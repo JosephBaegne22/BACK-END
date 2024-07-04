@@ -1,4 +1,4 @@
-import { racesReportsController } from "./raceReport.controller";
+import { raceReportController } from "./raceReport.controller";
 
 export default (app: any) => {
     app.get(
@@ -7,6 +7,6 @@ export default (app: any) => {
         //    Common.authenticateToken,
         //    Common.authenticateAccount,
         // ],
-        (req: Request, res: Response) => racesReportsController.getRaceReportsList(req, res)
+        (req: Request, res: Response) => raceReportController.getRaceReportsList(req, res)
      );
 };

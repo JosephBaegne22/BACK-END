@@ -1,4 +1,4 @@
-import { reportsController } from "./report.controller";
+import { reportController } from "./report.controller";
 
 export default (app: any) => {
     app.get(
@@ -7,6 +7,6 @@ export default (app: any) => {
         //    Common.authenticateToken,
         //    Common.authenticateAccount,
         // ],
-        (req: Request, res: Response) => reportsController.getReportsList(req, res)
+        (req: Request, res: Response) => reportController.getReportsList(req, res)
      );
 };

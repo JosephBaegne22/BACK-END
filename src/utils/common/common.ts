@@ -101,6 +101,55 @@ export class Common {
       } catch (error) { }
    }
 
+   public async authenticateTokenBis(req: Request, res: Response, next: NextFunction) {
+      try {
+         const token = req.headers.authorization;
+         if (token) {
+            jwt.verify(token, Constants.TOKEN_SECRET.KEY, async (err, decoded) => {
+               if (err) {
+                  return Helper.createResponse(res, HttpStatus.UNAUTHORIZED, `Unauthorized access`, {});
+               }
+               let sessionDetail;
+
+               /** verify session */
+               if (decoded?.sessionId) {
+                  sessionDetail = await SessionRecord.findOne({ _id: decoded.sessionId }, '_id userId');
+
+                  if (!sessionDetail) {
+                     return Helper.createResponse(res, HttpStatus.UNAUTHORIZED, `Unauthorized access`, {});
+                  }
+
+                  req['session'] = sessionDetail;
+               }
+
+               const [user] = await Promise.all([
+                  /** get user detail */
+                  UserRecord.findOne({ _id: decoded.id }),
+                  /** update session detail */
+                  new Promise(async (resolve, reject) => {
+                     if (!sessionDetail) return resolve(true);
+
+                     await SessionRecord.updateOne({ _id: sessionDetail._id }, { $set: { expireOn: new Date() } });
+                     return resolve(true);
+                  })
+               ]);
+               if (!user) {
+                  return Helper.createResponse(res, HttpStatus.UNAUTHORIZED, `Unauthorized access`, {});
+               }
+               req['user'] = user;
+               req['tokenData'] = decoded;
+
+               req.body.user = user;
+               req.body.tokenData = decoded;
+               next();
+            });
+         } else {
+            Helper.createResponse(res, HttpStatus.OK, `No user logged in`, {});
+            return;
+         }
+      } catch (error) { }
+   }
+
 }
 
 export default new Common();
