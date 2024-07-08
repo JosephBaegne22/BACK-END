@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { Helper } from "../../utils/helper";
-import { Constants } from '../../utils/constants/constant';
 import { RaceRecord } from './race.model';
 
 class RaceValidator {

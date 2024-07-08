@@ -6,7 +6,6 @@ export interface Report extends mongoose.Document {
   min_speed: number;
   distance_traveled: number;
   winner: boolean;
-  car_id: mongoose.Schema.Types.ObjectId;
   accident: boolean;
 }
 
@@ -28,14 +27,10 @@ const reportSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    car_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'Car'
-    },
     accident: {
       type: Boolean,
       required: true,
+      default: false
     },
   },
   { timestamps: true }
