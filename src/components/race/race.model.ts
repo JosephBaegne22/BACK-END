@@ -22,7 +22,7 @@ const raceSchema = new mongoose.Schema(
       required: true,
       default: 1
     },
-    userId: {
+    user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }

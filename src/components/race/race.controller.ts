@@ -28,9 +28,7 @@ class RaceController {
       const { id } = req.params;
         try {
            const race = await RaceRecord.findOne({ _id: id }).lean();
-           if (!race) {
-              return Helper.createResponse(res, HttpStatus.NO_CONTENT, 'RACE_NOT_FOUND', { });
-           }
+
            return Helper.createResponse(res, HttpStatus.OK, 'RACE_FETCHED', { race });
         } catch (error) {
            logger.error(__filename, {
@@ -45,11 +43,11 @@ class RaceController {
 
      public async startRace(req: Request, res: Response) {
       const { nb_drivers = 1, user } = req.body;
-      try {
+      try {         
          const race = new RaceRecord({
             start_at: new Date(),
             nb_drivers,
-            user_id: user._id,
+            user_id: user._id || '',
          });
          await race.save();
          return Helper.createResponse(res, HttpStatus.OK, 'START_RACE_SUCCESS', { });
@@ -65,16 +63,15 @@ class RaceController {
    }
 
    public async endRace(req: Request, res: Response) {
-      const { raceId } = req.body;
+      const { id } = req.params;
       try {
+         const race = await RaceRecord.findOne({ _id: id }).lean();
 
-         const race = await RaceRecord.findOne({_id: raceId}).lean();
-
-         if (!race) {
-            return Helper.createResponse(res, HttpStatus.OK, 'RACE_NOT_FOUND', { });
+         if (race?.end_at) {
+            return Helper.createResponse(res, HttpStatus.BAD_REQUEST, 'RACE_ALREADY_END', { });
          }
 
-         await RaceRecord.updateOne({_id: raceId}, {$set: {end_at: new Date()}});
+         await RaceRecord.updateOne({_id: id}, {$set: {end_at: new Date()}});
 
          return Helper.createResponse(res, HttpStatus.OK, 'END_RACE_SUCCESS', { });
       } catch (error) {

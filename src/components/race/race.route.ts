@@ -14,7 +14,7 @@ export default (app: any) => {
     );
 
     app.get(
-        '/api/race/:raceId', 
+        '/api/race/:id', 
         [
             validator.getRace
         ],
@@ -30,8 +30,10 @@ export default (app: any) => {
     );
 
     app.post(
-        '/api/race/end',
-        [],
+        '/api/race/end/:id',
+        [
+            validator.getRace
+        ],
         (req, res) => raceController.endRace(req, res)
     );
 };
