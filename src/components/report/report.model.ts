@@ -6,7 +6,7 @@ export interface Report extends mongoose.Document {
   min_speed: number;
   distance_traveled: number;
   winner: boolean;
-  accident: boolean;
+  crash: boolean;
 }
 
 const reportSchema = new mongoose.Schema(
@@ -27,9 +27,8 @@ const reportSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    accident: {
+    crash: {
       type: Boolean,
-      required: true,
       default: false
     },
   },

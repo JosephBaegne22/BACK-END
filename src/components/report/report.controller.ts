@@ -22,14 +22,14 @@ class ReportController {
      }
 
      public async createReport(req: Request, res: Response) {
-      const { max_speed, min_speed, distance_traveled, winner, accident } = req.body;
+      const { max_speed, min_speed, distance_traveled, winner, crash } = req.body;
       try {
          const report = new ReportRecord({
             max_speed, 
             min_speed, 
             distance_traveled, 
             winner, 
-            accident
+            crash
          });
          await report.save();
          return Helper.createResponse(res, HttpStatus.OK, 'REPORT_CREATE_SUCCESS', { });
