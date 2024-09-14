@@ -1,6 +1,8 @@
 node_modules
 dist
 logs
+env
 ./logs
 ./dist
 ./node_modules
+./env
