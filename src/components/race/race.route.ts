@@ -24,7 +24,8 @@ export default (app: any) => {
     app.post(
         '/api/race',
         [
-            common.authenticateTokenBis
+            common.authenticateToken,
+            validator.createRace
         ],
         (req, res) => raceController.createRace(req, res)
     );
