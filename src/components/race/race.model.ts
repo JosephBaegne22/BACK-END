@@ -9,6 +9,7 @@ export interface Race extends mongoose.Document {
   v_max: number;
   v_moyen: number;
   distance : number;
+  mode: string;
   user_id?: mongoose.Schema.Types.ObjectId;
 }
 
@@ -35,6 +36,9 @@ const raceSchema = new mongoose.Schema(
     },
     distance: {
       type: Number,
+    },
+    mode: {
+      type: String,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
