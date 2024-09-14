@@ -4,7 +4,11 @@ export interface Race extends mongoose.Document {
   _id: mongoose.Schema.Types.ObjectId;
   start_at: Date;
   end_at: Date;
-  nb_drivers: number;
+  duration: number;
+  v_min: number;
+  v_max: number;
+  v_moyen: number;
+  distance : number;
   user_id?: mongoose.Schema.Types.ObjectId;
 }
 
@@ -17,10 +21,20 @@ const raceSchema = new mongoose.Schema(
     end_at: {
       type: Date,
     },
-    nb_drivers: {
+    duration: {
       type: Number,
-      required: true,
-      default: 1
+    },
+    v_min: { 
+      type: Number,
+    },
+    v_max: { 
+      type: Number,
+    },
+    v_moyen: { 
+      type: Number,
+    },
+    distance: {
+      type: Number,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,

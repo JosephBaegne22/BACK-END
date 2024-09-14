@@ -1,3 +1,3 @@
-import { connection } from './connection';
+import { mqtt_connection } from './connection';
 
-export { connection };
+export { mqtt_connection };

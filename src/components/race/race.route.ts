@@ -22,18 +22,11 @@ export default (app: any) => {
     );
 
     app.post(
-        '/api/race/start',
+        '/api/race',
         [
             common.authenticateTokenBis
         ],
-        (req, res) => raceController.startRace(req, res)
+        (req, res) => raceController.createRace(req, res)
     );
 
-    app.post(
-        '/api/race/end/:id',
-        [
-            validator.getRace
-        ],
-        (req, res) => raceController.endRace(req, res)
-    );
 };

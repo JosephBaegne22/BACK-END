@@ -1,3 +1,3 @@
-import { connection } from './connection';
+import { db_connection } from './connection';
 
-export { connection };
+export { db_connection };

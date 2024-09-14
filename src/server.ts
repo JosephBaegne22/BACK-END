@@ -5,7 +5,8 @@ export const BASE_PATH: string = __dirname;
 config({ path: resolve(`${BASE_PATH}/../.env`) });
 
 import app from './app';
-import { connection } from './utils/dbConnection';
+import { db_connection } from './utils/dbConnection';
+import { mqtt_connection } from './utils/mqttConnection';
 import { logger } from './utils/logger';
 import mongoose from 'mongoose';
 
@@ -13,12 +14,17 @@ const port = process.env.PORT || 3000;
 
 const server = createServer(app);
 
-connection.then(() => {
+db_connection.then(() => {
    logger.info('DB connected successfully');
    server.listen(port, () => {
       logger.info(`Server is running on ${port} with process id ${process.pid}`);
    });
 });
+
+mqtt_connection.on('connect', () => {
+   logger.info('MQTT connected successfully');
+ })
+
 
 // Exit handler for server
 function exitHandler() {

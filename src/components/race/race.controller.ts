@@ -3,6 +3,7 @@ import { Helper } from '../../utils/helper';
 import { logger } from '../../utils/logger';
 import { Request, Response } from 'express';
 import { RaceRecord } from './race.model';
+import mongoose from 'mongoose';
 
 class RaceController {
     public async getRacesList(req: Request, res: Response) {
@@ -27,7 +28,7 @@ class RaceController {
      public async getRace(req: Request, res: Response) {
       const { id } = req.params;
         try {
-           const race = await RaceRecord.findOne({ _id: id }).lean();
+           const race = await RaceRecord.findOne({ _id: mongoose.Types.ObjectId(id) }).lean();
 
            return Helper.createResponse(res, HttpStatus.OK, 'RACE_FETCHED', { race });
         } catch (error) {
@@ -41,48 +42,33 @@ class RaceController {
         }
      }
 
-     public async startRace(req: Request, res: Response) {
-      const { nb_drivers = 1, user } = req.body;
-      try {         
+     public async createRace(req: Request, res: Response) {
+      const { user, vMin, vMax, startAt, endAt, duration } = req.body;
+      try {      
+         const v_moyen = (vMin + vMax) / 2;   
+         const distance = v_moyen * duration;
          const race = new RaceRecord({
-            start_at: new Date(),
-            nb_drivers,
-            user_id: user._id || '',
+            start_at: startAt,
+            end_at: endAt,
+            duration, // s
+            v_min: vMin, // m/s
+            v_max: vMax, // m/s
+            v_moyen, // m/s
+            distance, // m
+            user_id: user._id ,
          });
          await race.save();
-         return Helper.createResponse(res, HttpStatus.OK, 'START_RACE_SUCCESS', { });
+         return Helper.createResponse(res, HttpStatus.OK, 'RACE_CREATED', { });
       } catch (error) {
          logger.error(__filename, {
-            method: 'startRace',
+            method: 'createRace',
             requestId: req['uuid'],
-            custom_message: 'Error while start new race',
+            custom_message: 'Error while create new race',
             error
          });
-         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'START_RACE_ERROR', {});
+         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'CREATE_RACE_ERROR', {});
       }
    }
 
-   public async endRace(req: Request, res: Response) {
-      const { id } = req.params;
-      try {
-         const race = await RaceRecord.findOne({ _id: id }).lean();
-
-         if (race?.end_at) {
-            return Helper.createResponse(res, HttpStatus.BAD_REQUEST, 'RACE_ALREADY_END', { });
-         }
-
-         await RaceRecord.updateOne({_id: id}, {$set: {end_at: new Date()}});
-
-         return Helper.createResponse(res, HttpStatus.OK, 'END_RACE_SUCCESS', { });
-      } catch (error) {
-         logger.error(__filename, {
-            method: 'endRace',
-            requestId: req['uuid'],
-            custom_message: 'Error while end new race',
-            error
-         });
-         return Helper.createResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'END_RACE_ERROR', {});
-      }
-   }
 }
 export const raceController = new RaceController();
