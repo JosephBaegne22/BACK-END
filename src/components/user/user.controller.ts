@@ -188,49 +188,38 @@ class UserController {
       try {
 
          if (user) {
-            if (username) {
+            if (secret_answer && await bcrypt.compare(secret_answer, user.secret_answer)){
 
-               const usernameCheck = await UserRecord.find({ username }).lean();
+               if (username) {
 
-               if (username === user.username || usernameCheck.length === 0) {
-                  await UserRecord.updateOne({ _id: user._id }, {
-                     username: username,
-                  })
-                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
+                  const usernameCheck = await UserRecord.find({ username }).lean();
+   
+                  if (username === user.username || usernameCheck.length === 0) {
+                     await UserRecord.updateOne({ _id: user._id }, {
+                        username: username,
+                     })
+                     return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
+                  }
+                  return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'USERNAME_EXIST', {});
+   
+               } else if (password) {
+   
+                  const isPwdMatching = await bcrypt.compare(password, user.password);
+   
+                  if (isPwdMatching) {
+                     const encryptedNewPassword = await bcrypt.hash(newPassword, Constants.SALT_VALUE);
+                     await UserRecord.updateOne({ _id: user._id }, {
+                        password: encryptedNewPassword
+                     })
+   
+                     return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
+                  }
+                  return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'PASSWORD_WRONG', {});
+   
                }
-               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'USERNAME_EXIST', {});
-
-            } else if (secret_answer) {
-
-               const isAnswerMatching = await bcrypt.compare(secret_answer, user.secret_answer);
-               if (!isAnswerMatching) {
-
-                  const encryptedSecret_answer = await bcrypt.hash(newSecret_answer, Constants.SALT_VALUE);
-
-                  await UserRecord.updateOne({ _id: user._id }, {
-                     secret_answer: encryptedSecret_answer
-                  })
-
-                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
-               }
-               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'SECRET_ANSWER_WRONG', {});
-
-
-            } else if (password) {
-
-               const isPwdMatching = await bcrypt.compare(password, user.password);
-
-               if (isPwdMatching) {
-                  const encryptedNewPassword = await bcrypt.hash(newPassword, Constants.SALT_VALUE);
-                  await UserRecord.updateOne({ _id: user._id }, {
-                     password: encryptedNewPassword
-                  })
-
-                  return Helper.createResponse(res, HttpStatus.OK, 'UPDATE_SUCCESS', {});
-               }
-               return Helper.createResponse(res, HttpStatus.NOT_ACCEPTABLE, 'PASSWORD_WRONG', {});
 
             }
+            
          }
 
          return Helper.createResponse(res, HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', {});

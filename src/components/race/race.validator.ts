@@ -53,7 +53,6 @@ class RaceValidator {
 
         if (!startAt) {
             errors['startAt'] = 'START_AT_REQUIRED';
-
         }
 
         if (!endAt) {
@@ -69,7 +68,6 @@ class RaceValidator {
         }else if (mode !== "AUTO" && mode !== "MANUAL") {
             errors["mode"] = "MODE_TYPE_ERROR";
         }
-
 
         Helper.returnErrorOrPassToNext(res, next, errors);
     }
