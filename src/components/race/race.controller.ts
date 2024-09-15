@@ -47,7 +47,7 @@ class RaceController {
       try { 
          const v_min = vMin * ((0.0585 * Math.PI)/ 60);
          const v_max = vMax * ((0.0585 * Math.PI)/ 60);  
-         const v_moyen = (vMin + vMax) / 2;   
+         const v_moyen = (v_min + v_max) / 2;   
          const distance = v_moyen * duration;
          const race = new RaceRecord({
             start_at: startAt,
