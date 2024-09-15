@@ -63,7 +63,6 @@ class UserController {
       const { username, password } = req.body;
       try {
          const _user = await UserRecord.findOne({ username }).lean();
-         console.log(username);
 
          if (_user) {
 

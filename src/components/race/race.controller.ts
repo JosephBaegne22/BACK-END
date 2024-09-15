@@ -44,15 +44,17 @@ class RaceController {
 
      public async createRace(req: Request, res: Response) {
       const { user, vMin, vMax, startAt, endAt, duration, mode } = req.body;
-      try {      
+      try { 
+         const v_min = vMin * ((0.0585 * Math.PI)/ 60);
+         const v_max = vMax * ((0.0585 * Math.PI)/ 60);  
          const v_moyen = (vMin + vMax) / 2;   
          const distance = v_moyen * duration;
          const race = new RaceRecord({
             start_at: startAt,
             end_at: endAt,
             duration, // s
-            v_min: vMin, // m/s
-            v_max: vMax, // m/s
+            v_min, // m/s
+            v_max, // m/s
             v_moyen, // m/s
             distance, // m
             mode,
